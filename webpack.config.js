@@ -1,8 +1,17 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  mode: 'production', // Change to 'development' for non-production builds
+  plugins: [
+    // Copy processor.js to the dist directory
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'src/worklet/processor.js', to: 'processor.js' },
+      ],
+    }),
+  ],
+  mode: 'development', // Change to 'development' for non-production builds
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -18,6 +27,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
@@ -31,20 +44,11 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx', 'png', 'svg']
   },
   optimization: {
-    minimize: true, // Enable minimization
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          mangle: {
-            keep_classnames: true, // Prevent mangling class names
-            keep_fnames: true, // Prevent mangling function names
-          },
-        },
-      }),
-    ],
+    minimize: false, // Enable minimization
+
   },
   devtool: 'source-map',
 };

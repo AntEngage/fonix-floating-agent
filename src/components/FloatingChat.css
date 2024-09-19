@@ -33,7 +33,7 @@
   right: 20px;
   width: 350px;
   max-height: 500px;
-  background: linear-gradient(135deg, rgba(66, 64, 158, 0.95), rgba(144, 51, 190, 0.95)); /* Soft gradient with slight transparency */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)); /* Soft gradient with slight transparency */
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border */
   box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3); /* Softer shadow */
@@ -44,6 +44,34 @@
   opacity: 0;
   transform: translateY(20px); /* Initial state for animation */
 }
+
+
+
+.chat-window-webcall {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  min-height: 500px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)); /* Soft gradient with slight transparency */
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border */
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3); /* Softer shadow */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px); /* Initial state for animation */
+}
+
+
+.chat-window-webcall.open {
+  opacity: 1;
+  transform: translateY(0); /* Slide up on open */
+}
+
 
 .chat-window.open {
   opacity: 1;

@@ -1,0 +1,98 @@
+.audio-handler-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 56px 0;
+    transition: all 0.2s;
+    opacity: 1;
+    height: auto;
+    text-align: center;
+  }
+  
+  .audio-handler-no-permission,
+  .audio-handler-socket-error,
+  .audio-handler-waiting {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 56px 0;
+    transition: all 0.2s;
+    opacity: 1;
+    height: auto;
+    text-align: center;
+  }
+  
+  .audio-handler-title {
+    font-weight: bold;
+    font-size: 1.125rem;
+  }
+  
+  .audio-handler-call-started {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 28px 0;
+    transition: all 0.2s;
+    opacity: 1;
+    height: auto;
+  }
+  
+  .audio-handler-text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: #404040;
+    text-align: center;
+  }
+  
+  .audio-handler-heading {
+    font-size: 1.875rem;
+    font-weight: 600;
+  }
+  
+  .audio-handler-timer {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  .audio-handler-bubble-visualizer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .audio-handler-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .audio-handler-controls-horizontal {
+    flex-direction: row;
+  }
+  
+  .audio-handler-controls-vertical {
+    flex-direction: column;
+  }
+  
+  .audio-handler-icon {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .audio-handler-device-selector {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .audio-handler-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 256px;
+  }
+  
+  

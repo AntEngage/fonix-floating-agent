@@ -40,6 +40,14 @@ class ChatSDK {
         this.onMessage(data);
       }
     });
+    
+
+    this.socket.on('unauthorized', (data) => {
+      console.log(data);
+      if (this.onMessage) {
+        this.onMessage(data);
+      }
+    });
   }
 
   sendMessage(message) {
