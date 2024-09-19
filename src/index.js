@@ -1,6 +1,5 @@
-// src/sdk/index.js
-import FloatingChatWithCall from './components/FloatingChatWithCall';
 import FloatingChat from './components/FloatingChat';
-import AudioHandler from './components/AudioHandler';
+import ChatSDK from './sdk/chat-sdk';
 
-export { FloatingChatWithCall, FloatingChat, AudioHandler };
+export { ChatSDK };
+export default FloatingChat;

@@ -1,4 +1,3 @@
-// src/components/FloatingChat.js
 import React, { useState, useEffect } from 'react';
 import ChatSDK from '../sdk/chat-sdk';
 import './FloatingChat.css';
@@ -15,10 +14,16 @@ const FloatingChat = ({ host, port, conversationId, callerName, phoneNumber, ari
       setMessages((prevMessages) => [...prevMessages, data]);
     });
     setChatSDK(sdk);
+
+    const chatContainer = document.querySelector('.floating-chat-container');
+    if (chatContainer) {
+      chatContainer.style.zIndex = '999999';
+    }
+
     return () => {
       sdk.disconnect();
     };
-  }, [host, port, conversationId, callerName, phoneNumber, ariClient, token, actionPrompt, callDirection]);
+  }, []);
 
   const handleSendMessage = () => {
     if (chatSDK && message) {

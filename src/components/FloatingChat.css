@@ -1,223 +1,149 @@
 /* src/components/FloatingChat.css */
 
-/* Container for the entire chat and call widget */
-.floating-chat-with-call-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999999; /* Ensure it's on top */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  /* Floating Chat Button */
-  .floating-chat-button {
-    background: linear-gradient(145deg, #42409e, #9033be); /* Gradient with light angle */
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); /* Larger shadow */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
-    z-index: 999999;
-    margin-top: 10px; /* Add spacing between buttons */
-  }
-  
-  .floating-chat-button:hover {
-    transform: scale(1.15); /* Slightly enlarge on hover */
-    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
-  }
-  
-  /* Floating Call Button */
-  .floating-call-button {
-    background: linear-gradient(145deg, #ff4d4d, #d62828); /* Red gradient for call */
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    z-index: 999999;
-  }
-  
-  .floating-call-button:hover {
-    transform: scale(1.15); /* Slightly enlarge on hover */
-    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.4);
-  }
-  
-  /* Chat Window */
-  .chat-window {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    width: 350px;
-    max-height: 500px;
-    background: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
-    backdrop-filter: blur(20px); /* Glassmorphism effect */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Border to enhance glass effect */
-    border-radius: 20px; /* Increased roundness */
-    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2); /* Softer shadow */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth animation */
-    opacity: 0;
-    transform: translateY(20px); /* Initial state for animation */
-    z-index: 999999;
-  }
-  
-  .chat-window.open {
-    opacity: 1;
-    transform: translateY(0); /* Slide up on open */
-  }
-  
-  /* Chat Header */
-  .chat-header {
-    background: linear-gradient(135deg, #42409e, #9033be); /* Gradient */
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    font-size: 18px; /* Slightly larger font */
-    font-weight: bold;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  }
-  
-  .chat-header h4 {
-    margin: 0;
-  }
-  
-  .chat-header button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 22px; /* Larger close button */
-    cursor: pointer;
-    transition: color 0.3s ease; /* Smooth color transition */
-  }
-  
-  .chat-header button:hover {
-    color: #dddddd; /* Lighten color on hover */
-  }
-  
-  /* Chat Messages */
-  .chat-messages {
-    padding: 15px;
-    flex: 1;
-    overflow-y: auto;
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle transparent background */
-    backdrop-filter: blur(10px); /* Additional blur */
-  }
-  
-  .chat-message {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 15px; /* Rounded messages */
-    font-size: 14px;
-    line-height: 1.4;
-  }
-  
-  .chat-message.me {
-    text-align: right;
-    background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white */
-    color: #333;
-    margin-left: auto; /* Align right */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
-  }
-  
-  .chat-message.them {
-    text-align: left;
-    background-color: rgba(66, 64, 158, 0.8); /* Semi-transparent dark purple */
-    color: white;
-    margin-right: auto; /* Align left */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
-  }
-  
-  /* Chat Input */
-  .chat-input {
-    padding: 15px;
-    display: flex;
-    background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent background */
-    backdrop-filter: blur(10px); /* Blur effect */
-    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Subtle top border */
-  }
-  
-  .chat-input input {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px; /* Rounded input */
-    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent */
-    color: white;
-    outline: none;
-  }
-  
-  .chat-input input::placeholder {
-    color: rgba(255, 255, 255, 0.7); /* Lighter placeholder */
-  }
-  
-  .chat-input button {
-    margin-left: 10px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #42409e, #9033be); /* Gradient */
-    color: white;
-    border: none;
-    border-radius: 20px; /* Rounded button */
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
-  }
-  
-  .chat-input button:hover {
-    transform: scale(1.05); /* Slightly enlarge on hover */
-  }
-  
-  /* Call Controls */
-  .call-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(135deg, #42409e, #9033be); /* Matching chat window */
-    padding: 10px;
-    border-radius: 20px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-    margin-bottom: 10px;
-  }
-  
-  .call-controls .call-button {
-    background: white;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #42409e;
-    font-size: 20px;
-    margin: 5px 0;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-  }
-  
-  .call-controls .call-button.hang-up {
-    background: #ff4d4d; /* Red color for hang-up */
-    color: white;
-  }
-  
-  .call-controls .call-button:hover {
-    transform: scale(1.1);
-  }
-  
+.floating-chat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999999; /* Very high z-index to ensure it's on top */
+}
+
+.floating-chat-button {
+  background: linear-gradient(145deg, #42409e, #9033be);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-chat-button:hover {
+  transform: scale(1.15);
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.chat-window {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  background: linear-gradient(135deg, rgba(66, 64, 158, 0.95), rgba(144, 51, 190, 0.95)); /* Soft gradient with slight transparency */
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border */
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3); /* Softer shadow */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px); /* Initial state for animation */
+}
+
+.chat-window.open {
+  opacity: 1;
+  transform: translateY(0); /* Slide up on open */
+}
+
+.chat-header {
+  background: linear-gradient(135deg, #42409e, #9033be);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.chat-header h4 {
+  margin: 0;
+}
+
+.chat-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.3s ease; /* Smooth color transition */
+}
+
+.chat-header button:hover {
+  color: #dddddd; /* Lighten color on hover */
+}
+
+.chat-messages {
+  padding: 15px;
+  flex: 1;
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.1); /* Light background for messages */
+}
+
+.chat-message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chat-message.me {
+  text-align: right;
+  background-color: #e0e0e0;
+  color: #333;
+  margin-left: auto; /* Align right */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.chat-message.them {
+  text-align: left;
+  background-color: rgba(66, 64, 158, 0.8); /* Semi-transparent dark purple */
+  color: white;
+  margin-right: auto; /* Align left */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.chat-input {
+  padding: 15px;
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent background */
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Subtle top border */
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px; /* Rounded input */
+  background-color: rgba(255, 255, 255, 0.9); /* Almost solid for readability */
+  color: #333;
+  outline: none;
+}
+
+.chat-input input::placeholder {
+  color: rgba(51, 51, 51, 0.7); /* Darker placeholder for visibility */
+}
+
+.chat-input button {
+  margin-left: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #42409e, #9033be); /* Gradient */
+  color: white;
+  border: none;
+  border-radius: 20px; /* Rounded button */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+.chat-input button:hover {
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
