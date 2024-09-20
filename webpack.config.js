@@ -4,14 +4,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   plugins: [
-    // Copy processor.js to the dist directory
     new CopyWebpackPlugin({
       patterns: [
         { from: 'src/worklet/processor.js', to: 'processor.js' },
       ],
     }),
   ],
-  mode: 'development', // Change to 'development' for non-production builds
+  mode: 'development',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -47,7 +46,7 @@ module.exports = {
     extensions: ['.js', '.jsx', 'png', 'svg']
   },
   optimization: {
-    minimize: false, // Enable minimization
+    minimize: false,
 
   },
   devtool: 'source-map',
