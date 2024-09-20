@@ -1,22 +1,57 @@
-.visualizer-container {
-    width: 300px;
+.siri-visualizer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
     height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+}
+
+.siri-bubble {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0));
+  box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.3), inset 0px 2px 10px rgba(255, 255, 255, 0.2);
+  transition: width 0.1s ease, height 0.1s ease;
+}
+
+.siri-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.4), rgba(0, 0, 255, 0.2), transparent);
+  filter: blur(50px);
+  transform: translate(-50%, -50%);
+  animation: glowPulse 5s infinite ease-in-out;
+}
+
+.siri-glow-secondary {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at 70% 70%, rgba(255, 0, 255, 0.4), rgba(255, 0, 0, 0.2), transparent);
+  filter: blur(100px);
+  transform: translate(-50%, -50%);
+  animation: secondaryGlowPulse 8s infinite ease-in-out;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
   }
-  rect {
-    animation: pulsate 1s ease-in-out infinite;
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
   }
-  @keyframes pulsate {
-    0% {
-      transform: scaleY(1);
-    }
-    50% {
-      transform: scaleY(1.5);
-    }
-    100% {
-      transform: scaleY(1);
-    }
+}
+
+@keyframes secondaryGlowPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
   }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}

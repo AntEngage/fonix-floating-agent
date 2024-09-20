@@ -50,6 +50,9 @@ body{
 }
 
 .floating-chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   width: 60px;
   height: 60px;
   background: linear-gradient(145deg, #42409e, #9033be);
@@ -61,13 +64,25 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  z-index: 999999; /* Ensure it stays on top of other elements */
 }
+
 
 .chat-window {
   width: 390px;
   height: 574px;
   background: linear-gradient(90deg, #ececf5 0%, #f5ecf9 100%);
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.chat-window-web-call {
+  width: 390px;
+  height: 574px;
+  background: linear-gradient(90deg, #47409f 0%, #8535b7 100%);
   border-radius: 25px;
   display: flex;
   flex-direction: column;
@@ -83,6 +98,30 @@ body{
   background: linear-gradient(90deg, #3c419a 0%, #9332bf 100%);
   border-radius: 25px 25px 0 0;
 }
+
+.chat-header-web-call {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-radius: 25px 25px 0 0;
+}
+
+.chat-header-web-call h4 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.chat-header-web-call button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 
 .chat-header h4 {
   margin: 0;
@@ -101,14 +140,14 @@ body{
 
 .chat-messages {
   flex: 1;
-  padding: 23px;
+  padding-right: 10px;
   overflow-y: auto;
   position: relative;
+  margin-bottom: 20px;
 }
 
 .chat-message {
   display: flex!important;
-  margin-bottom: 20px;
   padding: 10px 12px;
   border-radius: 25px;
   font-family: 'Poppins', sans-serif;
@@ -127,27 +166,40 @@ body{
 }
 
 .chat-message.them {
-  max-width: 70%;
-  align-self: flex-start;
-  background: #ffffff;
-  border-radius: 25px 25px 25px 0px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  position: relative;
 }
 
-.chat-message.them .avatar {
-  width: 32px;
-  height: 32px;
-  margin-right: 9px;
+.avatar-wrapper {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.avatar-wrapper img {
   border-radius: 50%;
+  width: 100%;
+  height: 100%;
 }
 
-.chat-message.them .message-content {
-  background: #ffffff;
-  padding: 10px 12px;
-  border-radius: 100px 999px 999px 0px;
-  color: #343333;
+.message-content {
+  background-color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 25px 25px 25px 0px;
+  color: #333333;
+  margin-bottom: 20px;
+  max-width: 80%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.message-content span {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #333333;
+  line-height: 1.4;
+}
+
 
 .chat-input {
   display: flex;

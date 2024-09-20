@@ -463,14 +463,15 @@ const AudioHandler = ({
             </div>
           ) : (
             <div>
-              {callStarted ? (
-                <div className="audio-handler-call-started">
-                  <div className="audio-handler-text">
-                    {showBubbleVisualizer && (
+              {callStarted ? (<>
+                {showBubbleVisualizer && (
                       <div className="audio-handler-bubble-visualizer">
                         <BubbleVisualizer volume={volume} />
                       </div>
                     )}
+                <div className="audio-handler-call-started">
+                  <div className="audio-handler-text">
+                    
                     {heading && (
                       <h2 className="audio-handler-heading">{heading}</h2>
                     )}
@@ -519,6 +520,7 @@ const AudioHandler = ({
                     )}
                   </div>
                 </div>
+                </>
               ) : (
                 <div className="audio-handler-waiting">
                   <h1 className="audio-handler-title">
