@@ -8,24 +8,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout your code
       - uses: actions/checkout@v4
 
-      # Setup Node.js environment
+      # Set up Node.js environment
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      
-      # Debugging: Output npm and node versions
-      - run: |
-          node -v
-          npm -v
 
-      # Ensure the latest version of npm is installed (you can change the version if needed)
+      # Confirm package-lock.json exists
+      - name: Check for package-lock.json
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "Error: package-lock.json not found"
+            exit 1
+          fi
+
+      # Install the latest version of npm to ensure compatibility
       - run: npm install -g npm@latest
 
-      # Install dependencies with npm ci (you can switch to npm install if npm ci still fails)
-      - run: npm ci
+      # Try using npm install instead of npm ci temporarily
+      - run: npm install
 
       # Run tests
       - run: npm test
@@ -34,27 +36,25 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      # Checkout the code again for the publish job
       - uses: actions/checkout@v4
-
-      # Setup Node.js environment again
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
-      
-      # Debugging: Output npm and node versions
-      - run: |
-          node -v
-          npm -v
 
-      # Ensure the latest version of npm is installed (you can change the version if needed)
-      - run: npm install -g npm@latest
+      # Confirm package-lock.json exists in the publish step
+      - name: Check for package-lock.json
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "Error: package-lock.json not found in publish step"
+            exit 1
+          fi
 
-      # Install dependencies with npm ci (or npm install if needed)
-      - run: npm ci
+      # Use npm install for now; switch back to npm ci once the issue is resolved
+      - run: npm install
 
-      # Publish to npm registry
-      - run: npm publish
+      # Publish to npm
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
