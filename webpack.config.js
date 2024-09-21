@@ -3,14 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  plugins: [
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: 'src/worklet/processor.js', to: 'processor.js' },
-      ],
-    }),
-  ],
-  mode: 'development',
+  mode: 'production',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -23,6 +16,13 @@ module.exports = {
     react: 'react',
     'react-dom': 'react-dom',
   },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'src/worklet/processor.js', to: 'processor.js' },
+      ],
+    }),
+  ],
   module: {
     rules: [
       {
@@ -33,7 +33,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
         },
       },
       {
@@ -43,11 +43,10 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', 'png', 'svg']
+    extensions: ['.js', '.jsx', '.png', '.svg'],
   },
   optimization: {
-    minimize: false,
-
+    minimize: true,
+    minimizer: [new TerserPlugin()],
   },
-  devtool: 'source-map',
 };

@@ -1,0 +1,8 @@
+/src
+/test
+/node_modules
+/webpack.config.js
+/babel.config.js
+/rollup.config.js
+/README.md
+/LICENSE
