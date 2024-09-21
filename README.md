@@ -1,15 +1,19 @@
-Here’s the Markdown code for the updated README:
-
-```md
 # @antengage/fonix-floating-agent
 
-A flexible chat SDK with a floating chat button. This package allows you to easily integrate a chat feature into your React application with a customizable floating chat button.
+A flexible chat and webcall SDK with a floating chat button. This package allows you to easily integrate a chat and webcall features of [AntEngage](https://antengage.com) platform into your JS application, complete with a customizable floating chat button and audio processing capabilities.
 
 ## Features
 
 - Customizable floating chat button.
 - Seamless integration with React applications.
 - Audio processing capabilities via `processor.js`.
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (version 14 or higher)
+- [npm](https://www.npmjs.com/get-npm) (or [yarn](https://yarnpkg.com/getting-started))
 
 ## Installation
 
@@ -21,7 +25,7 @@ npm install @antengage/fonix-floating-agent
 
 ## Usage
 
-After installing the SDK, you can import and use it in your React application:
+After installing the SDK, you can import and use it in your JS application as follows:
 
 ```javascript
 import FloatingChat from "@antengage/fonix-floating-agent";
@@ -30,16 +34,16 @@ function App() {
   return (
     <div>
       <FloatingChat
-        host=""
-        port=""
-        conversationId=""
-        callerName=""
-        phoneNumber=""
-        ariClient=""
-        token="<AUTH_TOKEN>"
-        actionPrompt=""
-        callDirection=""
-        />
+        host=""              // Server host (e.g., "https://your-chat-server.com")
+        port=""              // Port number (e.g., "3000")
+        conversationId=""    // Unique ID for the conversation
+        callerName=""        // Name of the caller (user)
+        phoneNumber=""       // User's phone number (optional)
+        ariClient=""         // ARI client ID
+        token="<AUTH_TOKEN>" // Authentication token
+        actionPrompt=""      // Message or prompt for the user
+        callDirection=""     // Direction of the call (e.g., "inbound" or "outbound")
+      />
     </div>
   );
 }
@@ -49,9 +53,9 @@ export default App;
 
 ### Adding `processor.js` to the Public Folder
 
-For audio worklet support, you need to add a file named `processor.js` in your application's `public` folder. This is necessary for handling audio input/output in your chat application.
+For audio processing to work, you need to add a file named `processor.js` in your application's `public` folder. This file enables the audio worklet for handling real-time audio input/output in your chat application.
 
-**Steps:**
+#### Steps:
 
 1. Create a file called `processor.js` in the `public` directory of your React project.
    
@@ -69,7 +73,9 @@ class MyProcessor extends AudioWorkletProcessor {
     this.port.onmessage = this.handleMessage.bind(this);
   }
 
-  handleMessage(event) {}
+  handleMessage(event) {
+    // Handle incoming messages from the main thread
+  }
 
   process(inputs, outputs, parameters) {
     const input = inputs[0];
@@ -82,20 +88,23 @@ class MyProcessor extends AudioWorkletProcessor {
       for (let i = 0; i < inputChannelData.length; i++) {
         outputChannelData[i] = inputChannelData[i];
       }
+
+      // Send the processed audio data back to the main thread
       this.port.postMessage(inputChannelData.buffer);
     }
-    return true;
+    return true; // Continue processing
   }
 }
 
 registerProcessor('my-processor', MyProcessor);
 ```
 
-This script will handle audio input/output processing for the chat SDK. The `MyProcessor` class is an `AudioWorkletProcessor`, and it's registered as `'my-processor'`. This will allow your chat application to process audio data in real-time.
+This script will handle audio input/output processing for the chat SDK. The `MyProcessor` class is an `AudioWorkletProcessor`, and it's registered as `'my-processor'`. This allows your chat application to process audio data in real-time.
 
 ## License
 
-This package is licensed under the MIT License.
-```
+This package is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
 
-You can copy and paste this Markdown code into your README file. Let me know if you need further adjustments!
+---
+
+Feel free to [open an issue](https://github.com/AntEngage/fonix-floating-agent/issues) or submit a pull request if you encounter any issues or want to contribute to the project.
