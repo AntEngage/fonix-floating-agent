@@ -8,23 +8,53 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Checkout your code
       - uses: actions/checkout@v4
+
+      # Setup Node.js environment
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      
+      # Debugging: Output npm and node versions
+      - run: |
+          node -v
+          npm -v
+
+      # Ensure the latest version of npm is installed (you can change the version if needed)
+      - run: npm install -g npm@latest
+
+      # Install dependencies with npm ci (you can switch to npm install if npm ci still fails)
       - run: npm ci
+
+      # Run tests
       - run: npm test
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      # Checkout the code again for the publish job
       - uses: actions/checkout@v4
+
+      # Setup Node.js environment again
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+      
+      # Debugging: Output npm and node versions
+      - run: |
+          node -v
+          npm -v
+
+      # Ensure the latest version of npm is installed (you can change the version if needed)
+      - run: npm install -g npm@latest
+
+      # Install dependencies with npm ci (or npm install if needed)
       - run: npm ci
+
+      # Publish to npm registry
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
