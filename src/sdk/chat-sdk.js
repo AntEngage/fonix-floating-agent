@@ -1,33 +1,23 @@
 import io from 'socket.io-client';
 
 class ChatSDK {
-  constructor({ host, port, conversationId, callerName, phoneNumber, ariClient, token, licenseToken, actionPrompt, callDirection }) {
-    this.host = host;
-    this.port = port;
+  constructor({ ae_domain, conversationId, botId, token, licenseToken }) {
+    this.ae_domain = ae_domain;
     this.id = conversationId;
-    this.callerName = callerName;
-    this.phoneNumber = phoneNumber;
-    this.ariClient = ariClient;
+    this.botId = botId;
     this.token = token;
     this.licenseToken = licenseToken;
-    this.actionPrompt = actionPrompt;
-    this.callDirection = callDirection;
     this.socket = null;
     this.initializeSocket();
   }
 
   initializeSocket() {
-    this.socket = io(`http://${this.host}:${this.port}`, {
+    this.socket = io(this.ae_domain, {
       query: {
         conversation_id: this.id,
-        callerName: this.callerName,
-        phoneNumber: this.phoneNumber,
-        ariClient: this.ariClient,
+        botId: this.botId,
         token: this.token,
         licenseToken: this.licenseToken,
-        transcriptOnly: false,
-        actionPrompt: this.actionPrompt,
-        call_direction: this.callDirection,
       },
     });
 

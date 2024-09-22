@@ -7,16 +7,11 @@ import ChatIcon from '../assets/images/chat.svg';
 import Avatar from '../assets/images/avatar.svg';
 
 const FloatingChat = ({
-  host,
-  port,
+  ae_domain,
   conversationId,
-  callerName,
-  phoneNumber,
-  ariClient,
+  botId,
   token,
   licenseToken,
-  actionPrompt,
-  callDirection,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isWebCallOpen, setIsWebCallOpen] = useState(false);
@@ -25,26 +20,19 @@ const FloatingChat = ({
   const [chatSDK, setChatSDK] = useState(null);
   const [socketConnected, setSocketConnected] = useState(true);
 
-  // Ref for the chat messages container
   const messagesEndRef = useRef(null);
 
-  // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
     const sdk = new ChatSDK({
-      host,
-      port,
+      ae_domain,
       conversationId,
-      callerName,
-      phoneNumber,
-      ariClient,
+      botId,
       token,
       licenseToken,
-      actionPrompt,
-      callDirection,
     });
     sdk.setOnMessageCallback((data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
@@ -61,7 +49,6 @@ const FloatingChat = ({
     };
   }, []);
 
-  // Scroll to the bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -99,7 +86,6 @@ const FloatingChat = ({
                 </div>
               )
             )}
-            {/* Add a ref to this div to ensure we can scroll to it */}
             <div ref={messagesEndRef} />
           </div>
           <div className="chat-input">
@@ -143,12 +129,14 @@ const FloatingChat = ({
           </div>
           <AudioHandler
             showBubbleVisualizer={true}
-            heading={'Raahi'}
+            heading={'Flowify'}
             showTimer={true}
             direction={'horizontal'}
             socketConnected={socketConnected}
             setSocketConnected={setSocketConnected}
-            botId={'45172662-d1e1-49ae-b4fb-51d27e7aa5bf'}
+            botId={botId}
+            ae_domain={ae_domain}
+            setIsWebCallOpen={setIsWebCallOpen}
           />
         </div>
       )}

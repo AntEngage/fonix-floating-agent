@@ -25,15 +25,11 @@ const options = {
   minute: "2-digit",
   second: "2-digit",
 };
-
 const formatter = new Intl.DateTimeFormat("en-US", options);
 const parts = formatter.formatToParts(date);
 const localTime = `${parts[4].value}-${parts[0].value}-${parts[2].value} ${parts[6].value}:${parts[8].value}:${parts[10].value}`;
-
-const SOCKET_URL = `http://localhost:4000?localTime=${encodeURIComponent(localTime)}`;
-console.log(SOCKET_URL);
-
-const socket = io(SOCKET_URL);
+const SOCKET_URL = `?localTime=${encodeURIComponent(localTime)}`;
+const socket = io("http://localhost:4000"+SOCKET_URL);
 
 const AudioHandler = ({
   showBubbleVisualizer,
@@ -43,7 +39,10 @@ const AudioHandler = ({
   socketConnected,
   setSocketConnected,
   botId,
+  ae_domain,
+  setIsWebCallOpen
 }) => {
+  
   const [callId, setCallId] = useState("");
   const [timer, setTimer] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
@@ -66,10 +65,9 @@ const AudioHandler = ({
   const [isPermissionGranted, setPermissionGranted] = useState(false);
   const [socketConnecting, setSocketConnecting] = useState(false);
 
-  // Add a ref to track if startCall has been called
   const hasStartedCall = useRef(false);
 
-  const { volume, emotion } = useAudioAnalysis(
+  const { volume } = useAudioAnalysis(
     playbackAudioContextRef.current,
     analyserRef.current
   );
@@ -299,6 +297,7 @@ const AudioHandler = ({
   };
 
   const handleEndCall = () => {
+    setIsWebCallOpen(false)
     setTimerActive(false);
     stopAndFlushAudio();
     if (mediaStreamRef.current) {

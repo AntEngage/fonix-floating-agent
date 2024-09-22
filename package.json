@@ -1,6 +1,6 @@
 {
     "name": "@antengage/fonix-floating-agent",
-    "version": "1.0.3-preview",
+    "version": "1.0.4-preview",
     "description": "A flexible chat SDK with a floating chat button.",
     "main": "dist/chat-sdk.js",
     "types": "src/index.d.ts",

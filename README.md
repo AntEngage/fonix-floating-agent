@@ -34,15 +34,10 @@ function App() {
   return (
     <div>
       <FloatingChat
-        host=""              // Server host (e.g., "https://your-chat-server.com")
-        port=""              // Port number (e.g., "3000")
-        conversationId=""    // Unique ID for the conversation
-        callerName=""        // Name of the caller (user)
-        phoneNumber=""       // User's phone number (optional)
-        ariClient=""         // ARI client ID
-        token="<AUTH_TOKEN>" // Authentication token
-        actionPrompt=""      // Message or prompt for the user
-        callDirection=""     // Direction of the call (e.g., "inbound" or "outbound")
+        ae_domain="<DOMAIN"             // http://fonix.ai/xyz-ooo
+        botId="<BOT_ID"                 // ****-****-****
+        token="<AUTH_TOKEN>"            // *************=
+        licenseToken="<LICENSE_TOKEN>"  // **************
       />
     </div>
   );
