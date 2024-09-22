@@ -14,6 +14,7 @@ const FloatingChat = ({
   phoneNumber,
   ariClient,
   token,
+  licenseToken,
   actionPrompt,
   callDirection,
 }) => {
@@ -41,6 +42,7 @@ const FloatingChat = ({
       phoneNumber,
       ariClient,
       token,
+      licenseToken,
       actionPrompt,
       callDirection,
     });

@@ -1,8 +1,7 @@
-// src/sdk/chat-sdk.js
 import io from 'socket.io-client';
 
 class ChatSDK {
-  constructor({ host, port, conversationId, callerName, phoneNumber, ariClient, token, actionPrompt, callDirection }) {
+  constructor({ host, port, conversationId, callerName, phoneNumber, ariClient, token, licenseToken, actionPrompt, callDirection }) {
     this.host = host;
     this.port = port;
     this.id = conversationId;
@@ -10,6 +9,7 @@ class ChatSDK {
     this.phoneNumber = phoneNumber;
     this.ariClient = ariClient;
     this.token = token;
+    this.licenseToken = licenseToken;
     this.actionPrompt = actionPrompt;
     this.callDirection = callDirection;
     this.socket = null;
@@ -24,6 +24,7 @@ class ChatSDK {
         phoneNumber: this.phoneNumber,
         ariClient: this.ariClient,
         token: this.token,
+        licenseToken: this.licenseToken,
         transcriptOnly: false,
         actionPrompt: this.actionPrompt,
         call_direction: this.callDirection,
@@ -35,9 +36,10 @@ class ChatSDK {
     });
 
     this.socket.on('chat-response/' + this.id, (data) => {
-      console.log(data);
+      const parsedData = JSON.parse(data);
+      console.log(parsedData);
       if (this.onMessage) {
-        this.onMessage(data);
+        this.onMessage(parsedData);
       }
     });
     

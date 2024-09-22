@@ -8,6 +8,7 @@ export interface FloatingChatProps {
   phoneNumber: string;
   ariClient: string;
   token: string;
+  licenseToken: string;
   actionPrompt: string;
   callDirection: string;
 }
