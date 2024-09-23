@@ -66,7 +66,7 @@ const FloatingChat = ({
       {isOpen && (
         <div className="chat-window">
           <div className="chat-header">
-            <h4>Æ</h4>
+            <img className="ae-logo" height="25" width="25" src='ae-logo.png'></img>
             <button onClick={() => setIsOpen(false)}>✕</button>
           </div>
           <div className="chat-messages">
@@ -124,7 +124,7 @@ const FloatingChat = ({
       {isWebCallOpen && (
         <div className={`chat-window-web-call ${isWebCallOpen ? 'open' : ''}`}>
           <div className="chat-header-web-call">
-            <h4>Æ</h4>
+            <img className="ae-logo" height="25" width="25" src='ae-logo.png'></img>
             <button onClick={() => setIsWebCallOpen(false)}>✕</button>
           </div>
           <AudioHandler

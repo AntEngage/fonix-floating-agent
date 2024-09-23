@@ -34,8 +34,8 @@ function App() {
   return (
     <div>
       <FloatingChat
-        ae_domain="<DOMAIN"             // http://fonix.ai/xyz-ooo
-        botId="<BOT_ID"                 // ****-****-****
+        ae_domain="<DOMAIN>"             // http://fonix.ai/xyz-ooo
+        botId="<BOT_ID>"                 // ****-****-****
         token="<AUTH_TOKEN>"            // *************=
         licenseToken="<LICENSE_TOKEN>"  // **************
       />
@@ -68,9 +68,7 @@ class MyProcessor extends AudioWorkletProcessor {
     this.port.onmessage = this.handleMessage.bind(this);
   }
 
-  handleMessage(event) {
-    // Handle incoming messages from the main thread
-  }
+  handleMessage(event) {}
 
   process(inputs, outputs, parameters) {
     const input = inputs[0];
@@ -84,10 +82,9 @@ class MyProcessor extends AudioWorkletProcessor {
         outputChannelData[i] = inputChannelData[i];
       }
 
-      // Send the processed audio data back to the main thread
       this.port.postMessage(inputChannelData.buffer);
     }
-    return true; // Continue processing
+    return true;
   }
 }
 
@@ -95,6 +92,11 @@ registerProcessor('my-processor', MyProcessor);
 ```
 
 This script will handle audio input/output processing for the chat SDK. The `MyProcessor` class is an `AudioWorkletProcessor`, and it's registered as `'my-processor'`. This allows your chat application to process audio data in real-time.
+
+
+### Adding `ae-logo.png` to the Public Folder
+
+You can add your company's logo in your project's public folder and the logo name should be `ae-logo.png` and size should be 20x20 to 50x50.
 
 ## License
 

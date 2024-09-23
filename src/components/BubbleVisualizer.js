@@ -5,7 +5,7 @@ const BubbleVisualizer = ({ volume }) => {
   const [bubbleSize, setBubbleSize] = useState(100);
 
   useEffect(() => {
-    const newSize = 150 + volume * 30;
+    const newSize = 130 + volume * 10;
     setBubbleSize(newSize);
   }, [volume]);
 
