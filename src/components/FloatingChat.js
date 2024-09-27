@@ -5,10 +5,10 @@ import AudioHandler from './AudioHandler';
 import OutboundCallIcon from '../assets/images/outgoing-call.svg';
 import ChatIcon from '../assets/images/chat.svg';
 import Avatar from '../assets/images/avatar.svg';
+const { v4: uuidv4 } = require('uuid');
 
 const FloatingChat = ({
   ae_domain,
-  conversationId,
   botId,
   token,
   licenseToken,
@@ -19,6 +19,7 @@ const FloatingChat = ({
   const [message, setMessage] = useState('');
   const [chatSDK, setChatSDK] = useState(null);
   const [socketConnected, setSocketConnected] = useState(true);
+  const [conversationId, setConversationId] = useState(uuidv4());
 
   const messagesEndRef = useRef(null);
 
@@ -128,6 +129,7 @@ const FloatingChat = ({
             <button onClick={() => setIsWebCallOpen(false)}>✕</button>
           </div>
           <AudioHandler
+            conversationId={conversationId}
             showBubbleVisualizer={true}
             heading={'Flowify'}
             showTimer={true}

@@ -29,9 +29,10 @@ const formatter = new Intl.DateTimeFormat("en-US", options);
 const parts = formatter.formatToParts(date);
 const localTime = `${parts[4].value}-${parts[0].value}-${parts[2].value} ${parts[6].value}:${parts[8].value}:${parts[10].value}`;
 const SOCKET_URL = `?localTime=${encodeURIComponent(localTime)}`;
-const socket = io("http://localhost:4000"+SOCKET_URL);
+const socket = io("https://staging-webcall.antengage.com"+SOCKET_URL);
 
 const AudioHandler = ({
+  conversationId,
   showBubbleVisualizer,
   heading,
   showTimer,
@@ -43,7 +44,7 @@ const AudioHandler = ({
   setIsWebCallOpen
 }) => {
   
-  const [callId, setCallId] = useState("");
+  const [callId, setCallId] = useState(conversationId);
   const [timer, setTimer] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
   const [monitorAudio, setMonitorAudio] = useState(false);
@@ -190,7 +191,6 @@ const AudioHandler = ({
         console.log("Socket disconnected");
       });
     }
-    const localCallId = uuidv4();
 
     if (!captureAudioContextRef.current) {
       captureAudioContextRef.current = new (window.AudioContext ||
@@ -230,7 +230,7 @@ const AudioHandler = ({
     }
     console.log("ari client", botId);
     socket.emit("startCall", {
-      callId: localCallId,
+      callId: callId,
       ariClient: botId,
     });
 
@@ -245,7 +245,7 @@ const AudioHandler = ({
       });
       console.log("Media stream active:", stream.active);
       console.log("Audio tracks:", stream.getAudioTracks());
-      handleAudio(stream, localCallId);
+      handleAudio(stream, callId);
     } catch (error) {
       console.log(error);
     }
@@ -258,7 +258,7 @@ const AudioHandler = ({
     console.log("Audio playback stopped and queue flushed.");
   };
 
-  const handleAudio = (stream, localCallId) => {
+  const handleAudio = (stream, callId) => {
     if (
       captureAudioContextRef.current &&
       captureAudioContextRef.current.state === "suspended"
@@ -287,7 +287,7 @@ const AudioHandler = ({
         }
         if (!isMutedRef.current) {
           console.log("Sending audio chunk");
-          socket.emit(`inputAudioChunk/${localCallId}`, { chunk: event.data });
+          socket.emit(`inputAudioChunk/${callId}`, { chunk: event.data });
         }
       };
     }
