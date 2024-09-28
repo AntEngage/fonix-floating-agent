@@ -10,7 +10,7 @@ import SpeakerOnIcon from '../assets/images/speaker_on.svg';
 import SpeakerOffIcon from '../assets/images/speaker_off.svg';
 import MuteOffIcon from '../assets/images/mute_off.svg';
 import MuteOnIcon from '../assets/images/mute_on.svg';
-
+import ChatIcon from '../assets/images/chat_internal.svg';
 const localTimeUTC = new Date().toISOString();
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const date = new Date(localTimeUTC);
@@ -29,7 +29,7 @@ const formatter = new Intl.DateTimeFormat("en-US", options);
 const parts = formatter.formatToParts(date);
 const localTime = `${parts[4].value}-${parts[0].value}-${parts[2].value} ${parts[6].value}:${parts[8].value}:${parts[10].value}`;
 const SOCKET_URL = `?localTime=${encodeURIComponent(localTime)}`;
-const socket = io("https://staging-webcall.antengage.com"+SOCKET_URL);
+const socket = io("http://localhost:4000" + SOCKET_URL);
 
 const AudioHandler = ({
   conversationId,
@@ -41,10 +41,11 @@ const AudioHandler = ({
   setSocketConnected,
   botId,
   ae_domain,
-  setIsWebCallOpen
+  setIsWebCallOpen,
+  setIsOpen
 }) => {
-  
-  const [callId, setCallId] = useState(conversationId);
+
+  const [callId, setCallId] = useState('');
   const [timer, setTimer] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
   const [monitorAudio, setMonitorAudio] = useState(false);
@@ -192,6 +193,8 @@ const AudioHandler = ({
       });
     }
 
+    const localCallId = uuidv4();
+
     if (!captureAudioContextRef.current) {
       captureAudioContextRef.current = new (window.AudioContext ||
         window.webkitAudioContext)({ sampleRate: 16000 });
@@ -230,7 +233,7 @@ const AudioHandler = ({
     }
     console.log("ari client", botId);
     socket.emit("startCall", {
-      callId: callId,
+      callId: localCallId,
       ariClient: botId,
     });
 
@@ -245,7 +248,7 @@ const AudioHandler = ({
       });
       console.log("Media stream active:", stream.active);
       console.log("Audio tracks:", stream.getAudioTracks());
-      handleAudio(stream, callId);
+      handleAudio(stream, localCallId);
     } catch (error) {
       console.log(error);
     }
@@ -258,7 +261,7 @@ const AudioHandler = ({
     console.log("Audio playback stopped and queue flushed.");
   };
 
-  const handleAudio = (stream, callId) => {
+  const handleAudio = (stream, localCallId) => {
     if (
       captureAudioContextRef.current &&
       captureAudioContextRef.current.state === "suspended"
@@ -287,7 +290,7 @@ const AudioHandler = ({
         }
         if (!isMutedRef.current) {
           console.log("Sending audio chunk");
-          socket.emit(`inputAudioChunk/${callId}`, { chunk: event.data });
+          socket.emit(`inputAudioChunk/${localCallId}`, { chunk: event.data });
         }
       };
     }
@@ -464,13 +467,13 @@ const AudioHandler = ({
             <div>
               {callStarted ? (<>
                 {showBubbleVisualizer && (
-                      <div className="audio-handler-bubble-visualizer">
-                        <BubbleVisualizer volume={volume} />
-                      </div>
-                    )}
+                  <div className="audio-handler-bubble-visualizer">
+                    <BubbleVisualizer volume={volume} />
+                  </div>
+                )}
                 <div className="audio-handler-call-started">
                   <div className="audio-handler-text">
-                    
+
                     {heading && (
                       <h2 className="audio-handler-heading">{heading}</h2>
                     )}
@@ -480,11 +483,10 @@ const AudioHandler = ({
                   </div>
 
                   <div
-                    className={`audio-handler-controls ${
-                      direction === "horizontal"
+                    className={`audio-handler-controls ${direction === "horizontal"
                         ? "audio-handler-controls-horizontal"
                         : "audio-handler-controls-vertical"
-                    }`}
+                      }`}
                   >
                     {!isMuted ? (
                       <MuteOffIcon
@@ -504,7 +506,7 @@ const AudioHandler = ({
                       className="audio-handler-icon"
                       onClick={handleEndCall}
                     />
-                    {speakerOn ? (
+                    {/* {speakerOn ? (
                       <SpeakerOnIcon
                         alt="speaker"
                         className="audio-handler-icon"
@@ -516,10 +518,18 @@ const AudioHandler = ({
                         className="audio-handler-icon"
                         onClick={toggleSpeaker}
                       />
-                    )}
+                    )} */}
+                    <ChatIcon
+                      className="audio-handler-icon"
+                      onClick={() => {
+                        setIsOpen(true);
+                        setIsWebCallOpen(false);
+                      }}
+                    >
+                    </ChatIcon>
                   </div>
                 </div>
-                </>
+              </>
               ) : (
                 <div className="audio-handler-waiting">
                   <h1 className="audio-handler-title">

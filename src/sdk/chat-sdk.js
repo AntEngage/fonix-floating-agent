@@ -17,7 +17,9 @@ class ChatSDK {
         conversation_id: this.id,
         botId: this.botId,
         token: this.token,
+        clientType: "chat-sdk",
         licenseToken: this.licenseToken,
+        phoneNumber: "7008683032"
       },
     });
 

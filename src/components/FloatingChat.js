@@ -20,6 +20,7 @@ const FloatingChat = ({
   const [chatSDK, setChatSDK] = useState(null);
   const [socketConnected, setSocketConnected] = useState(true);
   const [conversationId, setConversationId] = useState(uuidv4());
+  const [isBreathing, setIsBreathing] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -36,7 +37,15 @@ const FloatingChat = ({
       licenseToken,
     });
     sdk.setOnMessageCallback((data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+      let newMessage = data.text;
+      if (newMessage && newMessage.includes('#call-switch')) {
+        newMessage = newMessage.replace('#call-switch', '').trim();
+        setIsBreathing(true);
+        setTimeout(() => {
+          setIsBreathing(false);
+        }, 10000);
+      }
+      setMessages((prevMessages) => [...prevMessages, { ...data, text: newMessage }]);
     });
     setChatSDK(sdk);
 
@@ -113,7 +122,7 @@ const FloatingChat = ({
             </div>
 
             <OutboundCallIcon
-              className="floating-chat-button-call"
+              className={`floating-chat-button-call ${isBreathing ? 'breathing-animation' : ''}`}
               onClick={() => {
                 setIsWebCallOpen(!isWebCallOpen);
                 setIsOpen(false);
@@ -139,6 +148,7 @@ const FloatingChat = ({
             botId={botId}
             ae_domain={ae_domain}
             setIsWebCallOpen={setIsWebCallOpen}
+            setIsOpen={setIsOpen}
           />
         </div>
       )}

@@ -2,6 +2,26 @@ body {
   display: flex !important;
 }
 
+.breathing-animation {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  70% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
 .ae-logo {
   border-width: thin;
   border-color: white;
