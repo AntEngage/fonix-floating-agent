@@ -81,7 +81,7 @@ const FloatingChat = ({
           </div>
           <div className="chat-messages">
             {messages.map((msg, index) =>
-              msg.sender === 'fonix' ? (
+              msg.sender !== 'fonix' ? (
                 <div key={index} className="chat-message me">
                   <span>{msg.text}</span>
                 </div>

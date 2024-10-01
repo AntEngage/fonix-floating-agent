@@ -1,16 +1,10 @@
 import { ComponentType } from 'react';
 
 export interface FloatingChatProps {
-  host: string;
-  port: number | string;
-  conversationId: string;
-  callerName: string;
-  phoneNumber: string;
-  ariClient: string;
+  ae_domain: string;
+  botId: string;
   token: string;
   licenseToken: string;
-  actionPrompt: string;
-  callDirection: string;
 }
 
 declare const FloatingChat: ComponentType<FloatingChatProps>;

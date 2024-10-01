@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.js',
+  entry: './src/index.js',  // Change to './src/index.ts' if TypeScript entry point
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'chat-sdk.js',
@@ -30,10 +30,17 @@ module.exports = {
         use: ['@svgr/webpack'],
       },
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,  // Support TypeScript
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',  // Ensures JSX is supported
+              '@babel/preset-typescript',  // Add TypeScript support
+            ],
+          },
         },
       },
       {
@@ -43,7 +50,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.png', '.svg'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.png', '.svg'],  // Add .tsx for TypeScript with JSX
   },
   optimization: {
     minimize: true,
