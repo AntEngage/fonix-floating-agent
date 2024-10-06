@@ -6,8 +6,6 @@ import BubbleVisualizer from "./BubbleVisualizer";
 import "./AudioHandler.css";
 
 import CallCutIcon from '../assets/images/call_cut.svg';
-import SpeakerOnIcon from '../assets/images/speaker_on.svg';
-import SpeakerOffIcon from '../assets/images/speaker_off.svg';
 import MuteOffIcon from '../assets/images/mute_off.svg';
 import MuteOnIcon from '../assets/images/mute_on.svg';
 import ChatIcon from '../assets/images/chat_internal.svg';
@@ -29,7 +27,7 @@ const formatter = new Intl.DateTimeFormat("en-US", options);
 const parts = formatter.formatToParts(date);
 const localTime = `${parts[4].value}-${parts[0].value}-${parts[2].value} ${parts[6].value}:${parts[8].value}:${parts[10].value}`;
 const SOCKET_URL = `?localTime=${encodeURIComponent(localTime)}`;
-const socket = io("https://staging-webcall.antengage.com" + SOCKET_URL);
+const socket = io("http://localhost:4000" + SOCKET_URL);
 
 const AudioHandler = ({
   conversationId,
