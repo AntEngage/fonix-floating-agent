@@ -40,7 +40,9 @@ const AudioHandler = ({
   botId,
   ae_domain,
   setIsWebCallOpen,
-  setIsOpen
+  setIsOpen,
+  setIsCallStarted,
+  isCallStarted
 }) => {
 
   const [callId, setCallId] = useState('');
@@ -155,6 +157,9 @@ const AudioHandler = ({
   };
 
   const startCall = async () => {
+
+    setIsCallStarted(true)
+
     console.log("Starting call...");
 
     try {

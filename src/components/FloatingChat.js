@@ -21,6 +21,7 @@ const FloatingChat = ({
   const [socketConnected, setSocketConnected] = useState(true);
   const [conversationId, setConversationId] = useState(uuidv4());
   const [isBreathing, setIsBreathing] = useState(false);
+  const [isCallStarted, setIsCallStarted] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -124,34 +125,37 @@ const FloatingChat = ({
             <OutboundCallIcon
               className={`floating-chat-button-call ${isBreathing ? 'breathing-animation' : ''}`}
               onClick={() => {
-                setIsWebCallOpen(!isWebCallOpen);
+                setIsWebCallOpen(true);
+                setIsCallStarted(true);
                 setIsOpen(false);
               }}
             ></OutboundCallIcon>
           </div>
         </div>
       )}
-      {isWebCallOpen && (
-        <div className={`chat-window-web-call ${isWebCallOpen ? 'open' : ''}`}>
-          <div className="chat-header-web-call">
-            <img className="ae-logo" height="25" width="25" src='ae-logo.png'></img>
-            <button onClick={() => setIsWebCallOpen(false)}>✕</button>
-          </div>
-          <AudioHandler
-            conversationId={conversationId}
-            showBubbleVisualizer={true}
-            heading={'Flowify'}
-            showTimer={true}
-            direction={'horizontal'}
-            socketConnected={socketConnected}
-            setSocketConnected={setSocketConnected}
-            botId={botId}
-            ae_domain={ae_domain}
-            setIsWebCallOpen={setIsWebCallOpen}
-            setIsOpen={setIsOpen}
-          />
+
+      {isCallStarted && (<div className={`chat-window-web-call ${isWebCallOpen ? 'open' : 'hide'} ${!isWebCallOpen && isCallStarted ? 'hide' : ''}`}>
+        <div className="chat-header-web-call">
+          <img className="ae-logo" height="25" width="25" src='ae-logo.png'></img>
+          <button onClick={() => setIsWebCallOpen(false)}>✕</button>
         </div>
-      )}
+        <AudioHandler
+          conversationId={conversationId}
+          showBubbleVisualizer={true}
+          heading={'Flowify'}
+          showTimer={true}
+          direction={'horizontal'}
+          socketConnected={socketConnected}
+          setSocketConnected={setSocketConnected}
+          botId={botId}
+          ae_domain={ae_domain}
+          setIsWebCallOpen={setIsWebCallOpen}
+          setIsOpen={setIsOpen}
+          setIsCallStarted={setIsCallStarted}
+          isCallStarted={isCallStarted}
+        />
+      </div>)}
+
       {!isOpen && !isWebCallOpen && (
         <ChatIcon
           className="floating-chat-button"
