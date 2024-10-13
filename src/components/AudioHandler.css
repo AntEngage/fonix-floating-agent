@@ -9,6 +9,21 @@
   text-align: center;
 }
 
+.command-text {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  text-align: center; /* Center the text inside the span */
+}
+
+.command-text:hover {
+  background-color: #d1d1d1;
+}
+
 .audio-handler-no-permission,
 .audio-handler-socket-error,
 .audio-handler-waiting {

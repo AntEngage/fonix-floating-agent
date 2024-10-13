@@ -12,6 +12,7 @@ const FloatingChat = ({
   botId,
   token,
   licenseToken,
+  audioInTextOut
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isWebCallOpen, setIsWebCallOpen] = useState(false);
@@ -22,6 +23,7 @@ const FloatingChat = ({
   const [conversationId, setConversationId] = useState(uuidv4());
   const [isBreathing, setIsBreathing] = useState(false);
   const [isCallStarted, setIsCallStarted] = useState(false);
+  const [seriousness, setSeriousness] = useState();
 
   const messagesEndRef = useRef(null);
 
@@ -134,7 +136,7 @@ const FloatingChat = ({
         </div>
       )}
 
-      {isCallStarted && (<div className={`chat-window-web-call ${isWebCallOpen ? 'open' : 'hide'} ${!isWebCallOpen && isCallStarted ? 'hide' : ''}`}>
+      {isCallStarted && (<div className={`chat-window-web-call ${isWebCallOpen ? 'open' : 'hide'}${!isWebCallOpen && isCallStarted ? 'hide' : ''} ${seriousness?seriousness : ''}`}>
         <div className="chat-header-web-call">
           <img className="ae-logo" height="25" width="25" src='ae-logo.png'></img>
           <button onClick={() => setIsWebCallOpen(false)}>✕</button>
@@ -153,6 +155,8 @@ const FloatingChat = ({
           setIsOpen={setIsOpen}
           setIsCallStarted={setIsCallStarted}
           isCallStarted={isCallStarted}
+          audioInTextOut={audioInTextOut}
+          setSeriousness={setSeriousness}
         />
       </div>)}
 

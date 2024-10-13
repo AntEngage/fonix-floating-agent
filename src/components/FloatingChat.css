@@ -105,6 +105,18 @@
   transition: all 0.3s ease;
 }
 
+.low {
+  background: linear-gradient(90deg, #5cc195 0%, #007b2a 100%)!important;
+}
+
+.medium {
+  background: linear-gradient(90deg, #5c83b7 0%, #4fb883 100%)!important;
+}
+
+.high {
+  background: linear-gradient(90deg, #3c3c91 0%, #b13050 100%)!important;
+}
+
 .chat-window-web-call {
   width: 25vw;
   height: 60vh;

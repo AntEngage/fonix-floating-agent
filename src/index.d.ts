@@ -5,6 +5,7 @@ export interface FloatingChatProps {
   botId: string;
   token: string;
   licenseToken: string;
+  audioInTextOut: string;
 }
 
 declare const FloatingChat: ComponentType<FloatingChatProps>;

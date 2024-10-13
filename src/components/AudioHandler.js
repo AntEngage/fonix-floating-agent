@@ -42,7 +42,9 @@ const AudioHandler = ({
   setIsWebCallOpen,
   setIsOpen,
   setIsCallStarted,
-  isCallStarted
+  isCallStarted,
+  audioInTextOut,
+  setSeriousness
 }) => {
 
   const [callId, setCallId] = useState('');
@@ -66,6 +68,7 @@ const AudioHandler = ({
   const currentSourceRef = useRef(null);
   const [isPermissionGranted, setPermissionGranted] = useState(false);
   const [socketConnecting, setSocketConnecting] = useState(false);
+  const [command, setCommand] = useState("");
 
   const hasStartedCall = useRef(false);
 
@@ -101,6 +104,18 @@ const AudioHandler = ({
       socket.on(`cleanup-queue/${callId}`, () => {
         console.log("Received cleanup event");
         stopAndFlushAudio();
+      });
+
+      socket.on(`chat-response/${callId}`, (data) => {
+        const regex = /\[([a-zA-Z]+)=(.*?)\]/g;
+        console.log(data);
+        let result;
+        const extractedValues = {};
+        while ((result = regex.exec(data.data.text)) !== null) {
+            extractedValues[result[1]] = result[2];
+        }
+        setCommand(extractedValues)
+        setSeriousness(extractedValues.seriousness)
       });
 
       socket.on(`endCallEvent/${callId}`, ({ state }) => {
@@ -469,7 +484,7 @@ const AudioHandler = ({
           ) : (
             <div>
               {callStarted ? (<>
-                {showBubbleVisualizer && (
+                {showBubbleVisualizer && audioInTextOut != 'true' && (
                   <div className="audio-handler-bubble-visualizer">
                     <BubbleVisualizer volume={volume} />
                   </div>
@@ -485,10 +500,23 @@ const AudioHandler = ({
                     )}
                   </div>
 
+
+                  {audioInTextOut == 'true' && command && command.principle && (
+                    <span className="command-text">{command.principle}</span>
+                  )}
+
+                  {audioInTextOut == 'true' && command && command.suggestion && (
+                    <span className="command-text">{command.suggestion}</span>
+                  )}
+
+                  {audioInTextOut == 'true' && command && command.seriousness && (
+                    <span className="command-text">{command.seriousness}</span>
+                  )}
+
                   <div
                     className={`audio-handler-controls ${direction === "horizontal"
-                        ? "audio-handler-controls-horizontal"
-                        : "audio-handler-controls-vertical"
+                      ? "audio-handler-controls-horizontal"
+                      : "audio-handler-controls-vertical"
                       }`}
                   >
                     {!isMuted ? (
@@ -522,14 +550,14 @@ const AudioHandler = ({
                         onClick={toggleSpeaker}
                       />
                     )} */}
-                    <ChatIcon
+                    {audioInTextOut != 'true' && <ChatIcon
                       className="audio-handler-icon"
                       onClick={() => {
                         setIsOpen(true);
                         setIsWebCallOpen(false);
                       }}
                     >
-                    </ChatIcon>
+                    </ChatIcon>}
                   </div>
                 </div>
               </>
