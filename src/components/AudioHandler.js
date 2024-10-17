@@ -9,6 +9,7 @@ import CallCutIcon from '../assets/images/call_cut.svg';
 import MuteOffIcon from '../assets/images/mute_off.svg';
 import MuteOnIcon from '../assets/images/mute_on.svg';
 import ChatIcon from '../assets/images/chat_internal.svg';
+
 const localTimeUTC = new Date().toISOString();
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const date = new Date(localTimeUTC);
@@ -27,7 +28,8 @@ const formatter = new Intl.DateTimeFormat("en-US", options);
 const parts = formatter.formatToParts(date);
 const localTime = `${parts[4].value}-${parts[0].value}-${parts[2].value} ${parts[6].value}:${parts[8].value}:${parts[10].value}`;
 const SOCKET_URL = `?localTime=${encodeURIComponent(localTime)}`;
-const socket = io("http://localhost:4000" + SOCKET_URL);
+
+let socket;
 
 const AudioHandler = ({
   conversationId,
@@ -69,6 +71,10 @@ const AudioHandler = ({
   const [isPermissionGranted, setPermissionGranted] = useState(false);
   const [socketConnecting, setSocketConnecting] = useState(false);
   const [command, setCommand] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [authenticated, setAuthenticated] = useState(false);
 
   const hasStartedCall = useRef(false);
 
@@ -76,6 +82,71 @@ const AudioHandler = ({
     playbackAudioContextRef.current,
     analyserRef.current
   );
+
+  // Non-authenticated socket initialization (if audioInTextOut !== 'true')
+  useEffect(() => {
+    if (audioInTextOut !== 'true') {
+      socket = io("http://localhost:4000" + SOCKET_URL); // Non-authenticated socket
+
+      if (socket) {
+        socket.on("connect", () => {
+          setSocketConnected(true);
+          console.log("Socket connected without auth");
+        });
+
+        socket.on("disconnect", () => {
+          setSocketConnected(false);
+          console.log("Socket disconnected");
+        });
+      }
+    }
+
+    return () => {
+      if (socket) {
+        socket.disconnect(); // Cleanup on unmount
+      }
+    };
+  }, [audioInTextOut]);
+
+
+  const auth = (data) => {
+    try {
+      socket = io("https://nonstatic.cloud" + SOCKET_URL, {
+        auth: {
+          username: data.username,
+          password: data.password,
+        },
+        withCredentials: true,
+      });
+
+      if (socket) {
+        socket.on("connect", () => {
+          setAuthenticated(true);
+          setMessage(`Successfully connected as ${data.username}`);
+          if (!hasStartedCall.current) {
+            hasStartedCall.current = true;
+            startCall();
+          }
+        });
+
+        socket.on("connect_error", (err) => {
+          setMessage(`Connection error: ${err.message}`);
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {
+      username,
+      password
+    };
+    auth(data);
+  };
 
   useEffect(() => {
     let interval = null;
@@ -90,11 +161,9 @@ const AudioHandler = ({
   }, [timerActive]);
 
   useEffect(() => {
-    console.log("callId : ", callId);
-    if (callId) {
+    if (callId && socket) {
       socket.on(`outputAudioChunk/${callId}`, (chunk) => {
         console.log("Received audio chunk");
-        console.log(chunk.length);
         audioQueueRef.current.push(chunk);
         if (!isPlayingRef.current) {
           playNextChunk();
@@ -108,19 +177,16 @@ const AudioHandler = ({
 
       socket.on(`chat-response/${callId}`, (data) => {
         const regex = /\[([a-zA-Z]+)=(.*?)\]/g;
-        console.log(data);
         let result;
         const extractedValues = {};
         while ((result = regex.exec(data.data.text)) !== null) {
-            extractedValues[result[1]] = result[2];
+          extractedValues[result[1]] = result[2];
         }
-        setCommand(extractedValues)
-        setSeriousness(extractedValues.seriousness)
+        setCommand(extractedValues);
+        setSeriousness(extractedValues.seriousness);
       });
 
       socket.on(`endCallEvent/${callId}`, ({ state }) => {
-        console.log("Received call state change event");
-        console.log(state);
         if (state === "endCall") {
           setTimeout(() => {
             handleEndCall();
@@ -130,7 +196,7 @@ const AudioHandler = ({
     }
 
     return () => {
-      if (callId) {
+      if (callId && socket) {
         socket.off(`outputAudioChunk/${callId}`);
         socket.off(`cleanup-queue/${callId}`);
         socket.off(`endCallEvent/${callId}`);
@@ -138,19 +204,25 @@ const AudioHandler = ({
     };
   }, [callId]);
 
-  useEffect(() => {
-    const handleCallStarted = (data) => {
-      setCallStarted(true);
-      setCallId(data.callId);
-      setTimer(0);
-      setTimerActive(true);
-    };
 
-    socket.on("callStarted", handleCallStarted);
-    return () => {
-      socket.off("callStarted", handleCallStarted);
-    };
-  }, []);
+  useEffect(() => {
+    if (socket) {
+      const handleCallStarted = (data) => {
+        console.log("Call started:", data);
+        setCallStarted(true);
+        setCallId(data.callId);
+        setTimer(0);
+        setTimerActive(true);
+      };
+
+      socket.on("callStarted", handleCallStarted);
+
+      return () => {
+        socket.off("callStarted", handleCallStarted);
+      };
+    }
+  }, [socket]);
+
 
   useEffect(() => {
     enumerateDevices();
@@ -455,124 +527,127 @@ const AudioHandler = ({
     });
   };
 
-  useEffect(() => {
-    if (!hasStartedCall.current) {
-      hasStartedCall.current = true;
-      startCall();
-    }
-  }, []);
-
   return (
     <>
-      {!isPermissionGranted ? (
-        <div className="audio-handler-no-permission">
-          <h1 className="audio-handler-title">
-            Please provide microphone permission!
-          </h1>
+      {audioInTextOut === 'true' ? (
+        <div class="form-container">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit">Connect</button>
+          </form>
         </div>
       ) : (
-        <div>
-          {!socketConnected ? (
-            <div className="audio-handler-socket-error">
-              <h1 className="audio-handler-title">Yikes! Something's off.</h1>
-              <div>
-                <button onClick={startCall} disabled={socketConnecting}>
-                  {socketConnecting ? "Connecting..." : "Try that again"}
-                </button>
+        !isPermissionGranted ? (
+          <div className="audio-handler-no-permission">
+            <h1 className="audio-handler-title">
+              Please provide microphone permission!
+            </h1>
+          </div>
+        ) : (
+          <div>
+            {!socketConnected ? (
+              <div className="audio-handler-socket-error">
+                <h1 className="audio-handler-title">Yikes! Something's off.</h1>
+                <div>
+                  <button onClick={startCall} disabled={socketConnecting}>
+                    {socketConnecting ? "Connecting..." : "Try that again"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div>
-              {callStarted ? (<>
-                {showBubbleVisualizer && audioInTextOut != 'true' && (
-                  <div className="audio-handler-bubble-visualizer">
-                    <BubbleVisualizer volume={volume} />
+            ) : (
+              <div>
+                {callStarted ? (
+                  <>
+                    {showBubbleVisualizer && audioInTextOut !== 'true' && (
+                      <div className="audio-handler-bubble-visualizer">
+                        <BubbleVisualizer volume={volume} />
+                      </div>
+                    )}
+                    <div className="audio-handler-call-started">
+                      <div className="audio-handler-text">
+                        {heading && (
+                          <h2 className="audio-handler-heading">{heading}</h2>
+                        )}
+                        {timerActive && showTimer && (
+                          <p className="audio-handler-timer">{formatTime(timer)}</p>
+                        )}
+                      </div>
+
+                      {audioInTextOut === 'true' && command && command.principle && (
+                        <span className="command-text">{command.principle}</span>
+                      )}
+
+                      {audioInTextOut === 'true' && command && command.suggestion && (
+                        <span className="command-text">{command.suggestion}</span>
+                      )}
+
+                      {audioInTextOut === 'true' && command && command.seriousness && (
+                        <span className="command-text">{command.seriousness}</span>
+                      )}
+
+                      <div
+                        className={`audio-handler-controls ${direction === "horizontal"
+                          ? "audio-handler-controls-horizontal"
+                          : "audio-handler-controls-vertical"
+                          }`}
+                      >
+                        {!isMuted ? (
+                          <MuteOffIcon
+                            alt="mic"
+                            className="audio-handler-icon"
+                            onClick={toggleMute}
+                          />
+                        ) : (
+                          <MuteOnIcon
+                            alt="mic"
+                            className="audio-handler-icon"
+                            onClick={toggleMute}
+                          />
+                        )}
+                        <CallCutIcon
+                          alt="call cut"
+                          className="audio-handler-icon"
+                          onClick={handleEndCall}
+                        />
+                        {audioInTextOut !== 'true' && (
+                          <ChatIcon
+                            className="audio-handler-icon"
+                            onClick={() => {
+                              setIsOpen(true);
+                              setIsWebCallOpen(false);
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="audio-handler-waiting">
+                    <h1 className="audio-handler-title">
+                      We’ll connect you shortly...
+                    </h1>
                   </div>
                 )}
-                <div className="audio-handler-call-started">
-                  <div className="audio-handler-text">
-
-                    {heading && (
-                      <h2 className="audio-handler-heading">{heading}</h2>
-                    )}
-                    {timerActive && showTimer && (
-                      <p className="audio-handler-timer">{formatTime(timer)}</p>
-                    )}
-                  </div>
-
-
-                  {audioInTextOut == 'true' && command && command.principle && (
-                    <span className="command-text">{command.principle}</span>
-                  )}
-
-                  {audioInTextOut == 'true' && command && command.suggestion && (
-                    <span className="command-text">{command.suggestion}</span>
-                  )}
-
-                  {audioInTextOut == 'true' && command && command.seriousness && (
-                    <span className="command-text">{command.seriousness}</span>
-                  )}
-
-                  <div
-                    className={`audio-handler-controls ${direction === "horizontal"
-                      ? "audio-handler-controls-horizontal"
-                      : "audio-handler-controls-vertical"
-                      }`}
-                  >
-                    {!isMuted ? (
-                      <MuteOffIcon
-                        alt="mic"
-                        className="audio-handler-icon"
-                        onClick={toggleMute}
-                      />
-                    ) : (
-                      <MuteOnIcon
-                        alt="mic"
-                        className="audio-handler-icon"
-                        onClick={toggleMute}
-                      />
-                    )}
-                    <CallCutIcon
-                      alt="call cut"
-                      className="audio-handler-icon"
-                      onClick={handleEndCall}
-                    />
-                    {/* {speakerOn ? (
-                      <SpeakerOnIcon
-                        alt="speaker"
-                        className="audio-handler-icon"
-                        onClick={toggleSpeaker}
-                      />
-                    ) : (
-                      <SpeakerOffIcon
-                        alt="speaker"
-                        className="audio-handler-icon"
-                        onClick={toggleSpeaker}
-                      />
-                    )} */}
-                    {audioInTextOut != 'true' && <ChatIcon
-                      className="audio-handler-icon"
-                      onClick={() => {
-                        setIsOpen(true);
-                        setIsWebCallOpen(false);
-                      }}
-                    >
-                    </ChatIcon>}
-                  </div>
-                </div>
-              </>
-              ) : (
-                <div className="audio-handler-waiting">
-                  <h1 className="audio-handler-title">
-                    We’ll connect you shortly...
-                  </h1>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
+        )
       )}
     </>
+
   );
 };
 
